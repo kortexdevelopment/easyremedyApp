@@ -12,7 +12,7 @@
    roundness: 2,
    colors: {
      ...DefaultTheme.colors,
-     primary: '#54B9FF',
+     primary: '#54B9FF',//54B9FF
      contrast: '#A5C0F3',
    },
  };
