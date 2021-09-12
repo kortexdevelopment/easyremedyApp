@@ -29,3 +29,13 @@ exports.remedies = async () => {
 
   return data;
 }
+
+exports.logOut = async(id) => {
+  let endpoint = `logoutDevice.php`;
+
+  let urlParams = `?id=${id}`
+
+  let data = HTTP.GET(`${endpoint}${urlParams}`);
+
+  return data;
+}

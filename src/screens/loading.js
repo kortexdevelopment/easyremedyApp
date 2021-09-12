@@ -32,7 +32,7 @@ export default function Loading(props){
         }
 
         isLoad(true);
-        getSession();
+        getRemedies();
     })
 
     const getSession = async() =>{
@@ -40,6 +40,7 @@ export default function Loading(props){
             var session = await AsyncStorage.getItem('@session')
             if(session === null){
                 goLogin();
+                return;
             }
         } catch(e) {
             alert('Something went wrong while reading sesson\'s data');
@@ -56,7 +57,7 @@ export default function Loading(props){
             return;
         }
 
-        await getRemedies();
+        goMain();
     }
 
     const getRemedies = async() => {
@@ -80,7 +81,7 @@ export default function Loading(props){
             errorLog += 'E:102\n';
         }
 
-        if(updateDate === undefined || updateDate.getTime() <= today.getTime()){
+        if(updateDate === undefined || updateDate.getTime() >= today.getTime() || remedies === undefined){
             updateDate = new Date();
             updateDate.setDate( updateDate.getDate() + 7);
 
@@ -112,7 +113,8 @@ export default function Loading(props){
             }
         }
 
-        goMain();
+        getSession();
+
     }
 
     const goLogin = async() =>{

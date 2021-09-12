@@ -105,6 +105,9 @@ export default function Login(props){
             doVerify(false);
             return;
         }
+
+        props.navigation.navigate('Main');   
+
     }
 
     const handleDevice = async(id) => {

@@ -12,11 +12,11 @@ import { Button,
 
 import Barcode from "react-native-barcode-builder";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import Sound from 'react-native-sound';
 const Sound = require('react-native-sound')
 Sound.setCategory('Playback');
 
 import RemedySearch from '../comps/remedySearch';
+import * as API from '../lib/api';
 
 const scrHeight = Dimensions.get('window').height;
 const scrWidth = Dimensions.get('window').width;
@@ -208,7 +208,28 @@ export default function Main(props){
     }
 
     const handleLogout = async() => {
-        //Some shit
+        try {
+            var result = await AsyncStorage.getItem('@session');
+            result = result === null ? undefined : JSON.parse(result);
+        } catch(e) {
+            //
+        }
+
+        try {
+            await AsyncStorage.removeItem('@session')
+        } catch(e) {
+            alert('An error ocurred while log out. \nPlease, try again later');
+            return;
+        }
+
+        if(result !== undefined){
+            try{
+                var device = await  API.logOut(result[0]);
+            }catch(e){
+                device = undefined;
+            }
+        }
+
         BackHandler.exitApp();
     }
     
