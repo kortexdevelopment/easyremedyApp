@@ -16,6 +16,8 @@ const Sound = require('react-native-sound')
 Sound.setCategory('Playback');
 
 import RemedySearch from '../comps/remedySearch';
+import PotSelect from '../comps/potSelect';
+
 import * as API from '../lib/api';
 
 const scrHeight = Dimensions.get('window').height;
@@ -90,10 +92,11 @@ export default function Main(props){
     const [load, isLoad] = React.useState(false);
     const [remedies, setRemedies] = React.useState([]);
     const [remedy, setRemedy] = React.useState({id:-1, label: 'Principal', value: '012345679801234567890123456789'});
+    const [potency, setPot] = React.useState('');
     const [ready, isReady] = React.useState(false);
     const [search, isSearch] = React.useState(false);
+    const [pot, isPot] = React.useState(false);
     const [generate, isGenerate] = React.useState(false);
-    const [timer, setTimer] = React.useState(null);
     const [counter, setCounter] = React.useState(0);
 
     React.useEffect(() => {
@@ -204,7 +207,12 @@ export default function Main(props){
     }   
 
     const handlePotentiation = async() => {
-        alert('Feature comming soon!');
+        isPot(true);
+    }
+
+    const handlePotSelect = async(e) => {
+        setPot(e);
+        isPot(false);
     }
 
     const handleLogout = async() => {
@@ -249,7 +257,7 @@ export default function Main(props){
             </View>
             {/* Button to select rate */}
             <View
-                style={{...styles.pickerView, display: search ? 'none' : 'flex'}}
+                style={{...styles.pickerView, display: search || pot ? 'none' : 'flex'}}
             >
                 <Button
                     disabled={generate}
@@ -318,6 +326,7 @@ export default function Main(props){
                         style={styles.vwRate}
                     >
                         {remedy.id > -1 ? `Rate:${remedy.value}` : ""}
+                        {potency === '' ? '   POTENCY REQUIRED' : `   Potency:${potency}`}
                     </Text>
                 )}
 
@@ -330,6 +339,10 @@ export default function Main(props){
 
             <Modal visible={search} onDismiss={() => isSearch(false)}>
                 <RemedySearch rList={remedies} onSelect={handleSelected}/>
+            </Modal>
+
+            <Modal visible={pot} onDismiss={() => isPot(false)}>
+                <PotSelect onSelect={handlePotSelect}/>
             </Modal>
         </>
     );

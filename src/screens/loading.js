@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { View,
          Image,
-         StyleSheet } from 'react-native';
+         StyleSheet,
+         Alert,
+         BackHandler } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -31,6 +33,7 @@ export default function Loading(props){
             return;
         }
 
+
         isLoad(true);
         getRemedies();
     })
@@ -51,9 +54,17 @@ export default function Loading(props){
         var expire = new Date(session[3]);
         var today =  new Date();
 
-        if(expire > today){
-            isLoad(false);
-            alert('Your credentials has expired');
+        if(expire < today){
+            Alert.alert(
+                'Crendentials Expired',
+                'Your credentials has expired. Please contact support',
+                [
+                    {
+                        text: 'Close App',
+                        onPress: () => deteleSession()
+                    }
+                ]
+            );
             return;
         }
 
@@ -123,6 +134,16 @@ export default function Loading(props){
 
     const goMain = async() =>{
         props.navigation.navigate('Main');   
+    }
+
+    const deteleSession = async() => {
+        try {
+            await AsyncStorage.removeItem('@session')
+        } catch(e) {
+            //
+        }
+
+        BackHandler.exitApp();
     }
 
     return (

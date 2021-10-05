@@ -2,7 +2,8 @@ import * as React from 'react';
 import { View,
          StyleSheet,
          ScrollView,
-         Text } from 'react-native';
+         Text,
+         ActivityIndicator } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
@@ -42,6 +43,7 @@ const theme = {
 export default function RemedySearch(props){
 
     const [ready, isReady] = React.useState(false);
+    const [work, isWork] = React.useState(false);
     const [search, setSearch] = React.useState('');
     const [cannon, setCannon] = React.useState([]);
     const [filter, setFilter] = React.useState([]);
@@ -53,7 +55,6 @@ export default function RemedySearch(props){
 
         isReady(true);
         setCannon(props.rList);
-        setFilter(props.rList);
     });
 
     React.useEffect(() => {
@@ -62,19 +63,35 @@ export default function RemedySearch(props){
         }
 
         if(search === ''){
-            setFilter(cannon);
+            isWork(false);
+            setFilter([]);
             return;
         }
 
+        isWork(true); 
         handleFilter();
     }, [search]);
 
+    const handleSearch = async(e) => {
+        isWork(true);
+        setSearch(e);
+    }
+
     const handleFilter = async() => {
-        const txt = cannon.filter(c => c.label.toLowerCase().includes(search));
-        const rts = cannon.filter(c => c.value.includes(search));
+
+        var re = new RegExp(`^${search}`,'gi');
+
+        const txt = cannon.filter(c => 
+            re.test(c.label)
+        );
+        const rts = cannon.filter(c => 
+            re.test(c.value)
+        );
+
         const result = [...txt, ...rts];
         
         setFilter(result);
+        isWork(false);
     }
 
     const handleSelect = async(r) => {
@@ -94,7 +111,7 @@ export default function RemedySearch(props){
                     label='Search'
                     placeholder='Search...'
                     value={search}
-                    onChangeText={text => setSearch(text)}
+                    onChangeText={handleSearch}
                 />
 
                 <View
@@ -108,15 +125,21 @@ export default function RemedySearch(props){
                     >
                         Select one option
                     </Text>
+
+                    { work && (
+                        <ActivityIndicator 
+                            size='large'
+                            color='#FFFFFF'
+                        />
+                    )}
                 </View>
-                
+
                 <ScrollView
                     style={styles.vwClicks}
                 >
                     {filter.map((rem => 
                         <RemedyClick Rate={rem.value} Name={rem.label} Remedy={rem} onSelect={handleSelect}/>
                     ))}
-                    {/* <RemedyClick Rate={654656565} Name={'Carlitos'}/> */}
                 </ScrollView>
 
             </View>
